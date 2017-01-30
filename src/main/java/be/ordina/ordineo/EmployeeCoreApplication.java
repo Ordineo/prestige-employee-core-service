@@ -20,7 +20,6 @@ import static org.springframework.hateoas.config.EnableHypermediaSupport.Hyperme
 @EnableEurekaClient
 @EnableRetry
 @EnableHypermediaSupport(type = HAL)
-
 public class EmployeeCoreApplication {
 	@Bean
 	public FilterRegistrationBean jwtFilter() {

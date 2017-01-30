@@ -18,8 +18,9 @@ logging:
   level:
     be.ordina: 'DEBUG'
     org.hibernate: 'ERROR'
----
 eureka:
+  instance:
+    preferIpAddress: false
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
