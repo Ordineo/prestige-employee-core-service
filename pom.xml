@@ -16,8 +16,8 @@
 		<java.version>1.8</java.version>
 		<snippetsDirectory>${project.build.directory}/generated-snippets</snippetsDirectory>
 		<!-- if we need to push to a private docker registry -->
-		<!-- <docker.registry>40.68.247.149:5000</docker.registry> -->
-		<docker.registry>prestige</docker.registry>
+		<docker.registry>104.40.147.238:5000</docker.registry>
+		<!--<docker.registry>prestige</docker.registry>-->
 	</properties>
 
 	<parent>
@@ -33,7 +33,7 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>Camden.SR4</version>
+				<version>Camden.RELEASE</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -365,40 +365,87 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>com.spotify</groupId>
-				<artifactId>docker-maven-plugin</artifactId>
-				<version>0.4.13</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>build</goal>
-							<!-- if we need to automatically push to a private docker registry -->
-							<!-- <goal>push</goal> -->
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<forceTags>true</forceTags>
-					<imageTags>
-						<imageTag>${project.version}</imageTag>
-						<imageTag>latest</imageTag>
-					</imageTags>
-					<image>${project.artifactId}</image>
-					<newName>${docker.registry}/${project.artifactId}</newName>
-					<imageName>${docker.registry}/${project.artifactId}</imageName>
-					<dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
-					<resources>
-						<resource>
-							<targetPath>/</targetPath>
-							<directory>${project.build.directory}</directory>
-							<include>${project.build.finalName}.jar</include>
-						</resource>
-					</resources>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>build-docker</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.spotify</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<version>0.4.13</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>build</goal>
+									<goal>push</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<forceTags>true</forceTags>
+							<imageTags>
+								<imageTag>${project.version}</imageTag>
+								<imageTag>latest</imageTag>
+							</imageTags>
+							<image>${project.artifactId}</image>
+							<newName>${docker.registry}/${project.artifactId}</newName>
+							<imageName>${docker.registry}/${project.artifactId}</imageName>
+							<dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
+							<resources>
+								<resource>
+									<targetPath>/</targetPath>
+									<directory>${project.build.directory}</directory>
+									<include>${project.build.finalName}.jar</include>
+								</resource>
+							</resources>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>docker-local</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.spotify</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<version>0.4.13</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>build</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<forceTags>true</forceTags>
+							<imageTags>
+								<imageTag>${project.version}</imageTag>
+								<imageTag>latest</imageTag>
+							</imageTags>
+							<image>${project.artifactId}</image>
+							<newName>prestige/${project.artifactId}</newName>
+							<imageName>prestige/${project.artifactId}</imageName>
+							<dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
+							<resources>
+								<resource>
+									<targetPath>/</targetPath>
+									<directory>${project.build.directory}</directory>
+									<include>${project.build.finalName}.jar</include>
+								</resource>
+							</resources>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>
